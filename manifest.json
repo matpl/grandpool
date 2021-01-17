@@ -1,0 +1,10 @@
+{
+    "name": "Grand Pool RDS",
+    "version": "0.1",
+    "description": "",
+    "manifest_version": 2,
+    "content_scripts": [{
+        "js": ["content.js"],
+        "matches": ["https://grandpool.rds.ca/groupe/*"]
+    }]
+  }
