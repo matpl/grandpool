@@ -41,8 +41,6 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
                     poolers[j].children[1].children[0].children[2].innerHTML += " <span style='color:green;'>(+" + points + ")</span>";
                 }
             }
-
-            console.log("should add " + points + " to " + names[0].innerText.trim());
         });
     }
 });
