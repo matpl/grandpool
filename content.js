@@ -1,5 +1,73 @@
 const poolers = document.querySelectorAll(".pooler-row div div a");
 
+function getTeamName(city) {
+    switch(city) {
+        case "WSH":
+            return "capitals";
+        case "PIT":
+            return "penguins";
+        case "CHI":
+            return "blackhawks";
+        case "FLA":
+            return "panthers";
+        case "CBJ":
+            return "blue jackets";
+        case "DET":
+            return "red wings";
+        case "BOS":
+            return "bruins";
+        case "NYI":
+            return "islanders";
+        case "WPG":
+            return "jets";
+        case "TOR":
+            return "maple leafs";
+        case "BUF":
+            return "sabres";
+        case "PHI":
+            return "flyers";
+        case "SJS":
+            return "sharks";
+        case "STL":
+            return "blues";
+        case "CAR":
+            return "hurricanes";
+        case "NSH":
+            return "predators";
+        case "MIN":
+            return "wild";
+        case "ANA":
+            return "ducks";
+        case "VAN":
+            return "canucks";
+        case "CGY":
+            return "flames";
+        case "MTL":
+            return "canadiens";
+        case "EDM":
+            return "oilers";
+        case "ARI":
+            return "coyotes";
+        case "VGK":
+            return "golden knights";
+        case "NJD":
+            return "devils";
+        case "NYR":
+            return "rangers";
+        case "COL":
+            return "avalanche";
+        case "LAK":
+            return "kings";
+        case "OTT":
+            return "senators";
+        case "DAL":
+            return "stars";
+        case "TBL":
+            return "lightning";
+    }
+    return undefined;
+}
+
 pointers = {}
 
 fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json()).then(j => {
@@ -20,6 +88,22 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
                 }
             }
         }
+
+        if (j.games[k].status.state === "FINAL") {
+            // check team points
+            const entries = Object.entries(j.games[k].currentStats.streaks);
+            for(let t = 0; t < 2; t++) {
+                let team = getTeamName(entries[t][0]);
+                if (!(team in pointers)) {
+                    pointers[team] = 0;
+                }
+                if (entries[t][1].type === "WINS") {
+                    pointers[team] += 2;
+                } else if (entries[t][1].type === "OT") {
+                    pointers[team] += 1;
+                }
+            }
+        }
     }
 
     for(let i = 0; i < poolers.length; i++) {
@@ -30,11 +114,20 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
             const names = doc.querySelectorAll(".name");
             // 0 is the name of the pooler
             var points = 0;
-            for(let j = 1; j < names.length - 7; j++) { // minus 7 because the last 7 are for goalies and teams
+            for(let j = 1; j < names.length; j++) { // minus 7 because the last 7 are for goalies and teams
                 names[j].removeChild(names[j].children[0]);
                 const player = names[j].innerText.replace("\u00A0", "").toLowerCase().trim();
-                if (player in pointers) {
-                    points += pointers[player];
+                if (j < names.length - 7) {
+                    if (player in pointers) {
+                        points += pointers[player];
+                    }
+                } else if (j < names.length - 3) {
+                    // goalies
+                } else {
+                    // teams
+                    if (player in pointers) {
+                        points += pointers[player];
+                    }
                 }
             }
 
