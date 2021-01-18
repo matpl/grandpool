@@ -10,12 +10,14 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
                 pointers[name] = 0;
             }
             pointers[name] += 1;
-            for(let a = 0; a < j.games[k].goals[g].assists.length; a++) {
-                let name = j.games[k].goals[g].assists[a].player.toLowerCase();
-                if (!(name in pointers)) {
-                    pointers[name] = 0;
+            if (j.games[k].goals[g].assists) {
+                for(let a = 0; a < j.games[k].goals[g].assists.length; a++) {
+                    let name = j.games[k].goals[g].assists[a].player.toLowerCase();
+                    if (!(name in pointers)) {
+                        pointers[name] = 0;
+                    }
+                    pointers[name] += 1;
                 }
-                pointers[name] += 1;
             }
         }
     }
