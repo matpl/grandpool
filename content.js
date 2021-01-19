@@ -1,5 +1,3 @@
-const poolers = document.querySelectorAll(".pooler-row div div a");
-
 function getPlayerName(player) {
     switch(player) {
         case "mitch marner":
@@ -114,36 +112,47 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
         }
     }
 
-    for(let i = 0; i < poolers.length; i++) {
-        // fetch the page and the players
-        fetch(poolers[i].href).then(d => d.text()).then(t => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(t, "text/html");
-            const names = doc.querySelectorAll(".name");
-            // 0 is the name of the pooler
-            var points = 0;
-            for(let j = 1; j < names.length; j++) { // minus 7 because the last 7 are for goalies and teams
-                names[j].removeChild(names[j].children[0]);
-                const player = getPlayerName(names[j].innerText.replace("\u00A0", "").toLowerCase().trim());
-                if (j < names.length - 7) {
-                    if (player in pointers) {
-                        points += pointers[player];
-                    }
-                } else if (j < names.length - 3) {
-                    // goalies
-                } else {
-                    // teams
-                    if (player in pointers) {
-                        points += pointers[player];
+    if(document.location.href.includes("groupe")) {
+        const poolers = document.querySelectorAll(".pooler-row div div a");
+        for(let i = 0; i < poolers.length; i++) {
+            // fetch the page and the players
+            fetch(poolers[i].href).then(d => d.text()).then(t => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(t, "text/html");
+                const names = doc.querySelectorAll(".name");
+                // 0 is the name of the pooler
+                var points = 0;
+                for(let j = 1; j < names.length; j++) {
+                    names[j].removeChild(names[j].children[0]);
+                    const player = getPlayerName(names[j].innerText.replace("\u00A0", "").toLowerCase().trim());
+                    if (j < names.length - 7) {
+                        if (player in pointers) {
+                            points += pointers[player];
+                        }
+                    } else if (j < names.length - 3) {
+                        // goalies
+                    } else {
+                        // teams
+                        if (player in pointers) {
+                            points += pointers[player];
+                        }
                     }
                 }
-            }
-
-            for(let j = 0; j < poolers.length; j++) {
-                if (poolers[j].children[0].innerText.toLowerCase().includes(names[0].innerText.toLowerCase().trim())) {
-                    poolers[j].children[1].children[0].children[2].innerHTML += " <span style='color:green;'>(+" + points + ")</span>";
+    
+                for(let j = 0; j < poolers.length; j++) {
+                    if (poolers[j].children[0].innerText.toLowerCase().includes(names[0].innerText.toLowerCase().trim())) {
+                        poolers[j].children[1].children[0].children[2].innerHTML += " <span style='color:green;'>(+" + points + ")</span>";
+                    }
                 }
+            });
+        }
+    } else {
+        const players = document.querySelectorAll(".player-row div div a div.name");
+        for(let j = 0; j < players.length; j++) {
+            const player = getPlayerName(players[j].innerText.split('\n')[0].replace("\u00A0", "").toLowerCase().trim());
+            if (player in pointers) {
+                players[j].innerHTML = players[j].innerHTML.substring(0, players[j].innerHTML.indexOf('<')) + "<span style='color:green;'>&nbsp;(+" + pointers[player] + ")</span>" + players[j].innerHTML.substring(players[j].innerHTML.indexOf('<'));
             }
-        });
+        }
     }
 });
