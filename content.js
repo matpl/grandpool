@@ -1,5 +1,13 @@
 const poolers = document.querySelectorAll(".pooler-row div div a");
 
+function getPlayerName(player) {
+    switch(player) {
+        case "mitch marner":
+            return "mitchell marner";
+    }
+    return player;
+}
+
 function getTeamName(city) {
     switch(city) {
         case "WSH":
@@ -116,7 +124,7 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
             var points = 0;
             for(let j = 1; j < names.length; j++) { // minus 7 because the last 7 are for goalies and teams
                 names[j].removeChild(names[j].children[0]);
-                const player = names[j].innerText.replace("\u00A0", "").toLowerCase().trim();
+                const player = getPlayerName(names[j].innerText.replace("\u00A0", "").toLowerCase().trim());
                 if (j < names.length - 7) {
                     if (player in pointers) {
                         points += pointers[player];
