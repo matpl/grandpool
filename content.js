@@ -150,7 +150,7 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
         const players = document.querySelectorAll(".player-row div div a div.name");
         for(let j = 0; j < players.length; j++) {
             const player = getPlayerName(players[j].innerText.split('\n')[0].replace("\u00A0", "").toLowerCase().trim());
-            if (player in pointers) {
+            if (player in pointers && pointers[player] > 0) {
                 players[j].innerHTML = players[j].innerHTML.substring(0, players[j].innerHTML.indexOf('<')) + "<span style='color:green;'>&nbsp;(+" + pointers[player] + ")</span>" + players[j].innerHTML.substring(players[j].innerHTML.indexOf('<'));
             }
         }
