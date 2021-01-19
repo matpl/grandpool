@@ -1,4 +1,5 @@
 function getPlayerName(player) {
+    player = player.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // remove accents
     switch(player) {
         case "mitch marner":
             return "mitchell marner";
@@ -79,7 +80,7 @@ pointers = {}
 fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json()).then(j => {
     for(let k = 0; k < j.games.length; k++) {
         for(let g = 0; g < j.games[k].goals.length; g++) {
-            let name = j.games[k].goals[g].scorer.player.toLowerCase();
+            let name = getPlayerName(j.games[k].goals[g].scorer.player.toLowerCase());
             if (!(name in pointers)) {
                 pointers[name] = 0;
             }
