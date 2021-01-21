@@ -1,6 +1,6 @@
 {
     "name": "Grand Pool RDS - En Direct",
-    "version": "0.3",
+    "version": "0.4",
     "description": "Ajout des points en direct dans ton pool",
     "manifest_version": 2,
     "content_scripts": [{
