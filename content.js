@@ -146,7 +146,7 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
                 }
             }
 
-            if(document.location.href.includes("groupe")) {
+            if(document.location.href.includes("groupe") || document.location.href.includes("classement") || document.location.href.includes("poolers")) {
                 const poolers = document.querySelectorAll(".pooler-row div div a");
                 for(let i = 0; i < poolers.length; i++) {
                     // fetch the page and the players
@@ -164,21 +164,20 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
                             }
                         }
             
-                        for(let j = 0; j < poolers.length; j++) {
-                            if (poolers[j].children[0].innerText.toLowerCase().includes(names[0].innerText.toLowerCase().trim())) {
-                                poolers[j].children[1].children[0].children[2].innerHTML += " <span style='color:green;'>(+" + points + ")</span>";
-                            }
-                        }
+                        poolers[i].children[1].children[0].children[2].innerHTML += " <span style='color:green;'>(+" + points + ")</span>";
                     });
                 }
             } else {
+                let total = 0;
                 const players = document.querySelectorAll(".player-row div div a div.name");
                 for(let j = 0; j < players.length; j++) {
                     const player = getPlayerName(players[j].innerText.split('\n')[0].replace("\u00A0", "").trim(), j >= 22 /* team */ ? false : true);
                     if (player in pointers && pointers[player] > 0) {
+                        total += pointers[player];
                         players[j].innerHTML = players[j].innerHTML.substring(0, players[j].innerHTML.indexOf('<')) + "<span style='color:green;'>&nbsp;(+" + pointers[player] + ")</span>" + players[j].innerHTML.substring(players[j].innerHTML.indexOf('<'));
                     }
                 }
+                document.querySelector(".myProfile-header .row div:last-child div:last-child .highlight").innerHTML += "<span style='color:green;'> (+" + total + ")</span>";
             }
         });
     });
