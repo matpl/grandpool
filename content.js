@@ -1,11 +1,14 @@
 
-function getPlayerName(player) {
+function getPlayerName(player, shorten = true) {
     player = player.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // remove accents
-    const splits = player.split(" ");
-    if(splits[0].length > 2) {
-        splits[0] = splits[0].substring(0, 3);
+    if(shorten) {
+        const splits = player.split(" ");
+        if(splits[0].length > 2) {
+            splits[0] = splits[0].substring(0, 3);
+        }
+        player = splits.join(" ");
     }
-    return splits.join(" ");
+    return player;
 }
 
 function getTeamName(city) {
@@ -155,7 +158,7 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
                         var points = 0;
                         for(let j = 1; j < names.length; j++) {
                             names[j].removeChild(names[j].children[0]);
-                            const player = getPlayerName(names[j].innerText.replace("\u00A0", "").trim());
+                            const player = getPlayerName(names[j].innerText.replace("\u00A0", "").trim(), j >= 23 /* team */ ? false : true);
                             if (player in pointers) {
                                 points += pointers[player];
                             }
@@ -171,7 +174,7 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
             } else {
                 const players = document.querySelectorAll(".player-row div div a div.name");
                 for(let j = 0; j < players.length; j++) {
-                    const player = getPlayerName(players[j].innerText.split('\n')[0].replace("\u00A0", "").trim());
+                    const player = getPlayerName(players[j].innerText.split('\n')[0].replace("\u00A0", "").trim(), j >= 22 /* team */ ? false : true);
                     if (player in pointers && pointers[player] > 0) {
                         players[j].innerHTML = players[j].innerHTML.substring(0, players[j].innerHTML.indexOf('<')) + "<span style='color:green;'>&nbsp;(+" + pointers[player] + ")</span>" + players[j].innerHTML.substring(players[j].innerHTML.indexOf('<'));
                     }
