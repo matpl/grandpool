@@ -89,7 +89,7 @@ fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json(
             }
             if (j.games[k].goals[g].assists) {
                 for(let a = 0; a < j.games[k].goals[g].assists.length; a++) {
-                    let name = j.games[k].goals[g].assists[a].player.toLowerCase();
+                    let name = getPlayerName(j.games[k].goals[g].assists[a].player.toLowerCase());
                     if (!(name in pointers)) {
                         pointers[name] = 0;
                     }
