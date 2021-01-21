@@ -1,10 +1,10 @@
 function getPlayerName(player) {
     player = player.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // remove accents
-    switch(player) {
-        case "mitch marner":
-            return "mitchell marner";
+    const splits = player.split(" ");
+    if(splits[0].length > 2) {
+        splits[0] = splits[0].substring(0, 3);
     }
-    return player;
+    return splits.join(" ");
 }
 
 function getTeamName(city) {
@@ -80,11 +80,13 @@ pointers = {}
 fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json()).then(j => {
     for(let k = 0; k < j.games.length; k++) {
         for(let g = 0; g < j.games[k].goals.length; g++) {
-            let name = getPlayerName(j.games[k].goals[g].scorer.player.toLowerCase());
-            if (!(name in pointers)) {
-                pointers[name] = 0;
+            if(j.games[k].goals[g].scorer && j.games[k].goals[g].scorer.player) {
+                let name = getPlayerName(j.games[k].goals[g].scorer.player.toLowerCase());
+                if (!(name in pointers)) {
+                    pointers[name] = 0;
+                }
+                pointers[name] += 1;
             }
-            pointers[name] += 1;
             if (j.games[k].goals[g].assists) {
                 for(let a = 0; a < j.games[k].goals[g].assists.length; a++) {
                     let name = j.games[k].goals[g].assists[a].player.toLowerCase();
