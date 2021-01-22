@@ -159,7 +159,7 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
                             var points = 0;
                             for(let j = 1; j < names.length; j++) {
                                 names[j].removeChild(names[j].children[0]);
-                                const player = getPlayerName(names[j].innerText.replace("\u00A0", "").trim(), j >= 23 /* team */ ? false : true);
+                                const player = getPlayerName(names[j].innerText.replace("\u00A0", "").trim(), j >= players.length - 3 /* team */ ? false : true);
                                 if (player in pointers) {
                                     points += pointers[player];
                                 }
@@ -170,9 +170,9 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
                     }
                 } else {
                     let total = 0;
-                    const players = document.querySelectorAll(".player-row div div a div.name");
+                    const players = document.querySelectorAll(".player-row:not(.exchanged) div div a div.name");
                     for(let j = 0; j < players.length; j++) {
-                        const player = getPlayerName(players[j].innerText.split('\n')[0].replace("\u00A0", "").trim(), j >= 22 /* team */ ? false : true);
+                        const player = getPlayerName(players[j].innerText.split('\n')[0].replace("\u00A0", "").trim(), j >= players.length - 3 /* team */ ? false : true);
                         if (player in pointers && pointers[player] > 0) {
                             total += pointers[player];
                             players[j].innerHTML = players[j].innerHTML.substring(0, players[j].innerHTML.indexOf('<')) + "<span style='color:green;'>&nbsp;(+" + pointers[player] + ")</span>" + players[j].innerHTML.substring(players[j].innerHTML.indexOf('<'));
