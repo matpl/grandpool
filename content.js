@@ -154,12 +154,12 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
                         fetch(poolers[i].href).then(d => d.text()).then(t => {
                             const parser = new DOMParser();
                             const doc = parser.parseFromString(t, "text/html");
-                            const names = doc.querySelectorAll(".name");
+                            const names = doc.querySelectorAll(".player-row:not(.exchanged) div div a div.name");
                             // 0 is the name of the pooler
                             var points = 0;
-                            for(let j = 1; j < names.length; j++) {
+                            for(let j = 0; j < names.length; j++) {
                                 names[j].removeChild(names[j].children[0]);
-                                const player = getPlayerName(names[j].innerText.replace("\u00A0", "").trim(), j >= players.length - 3 /* team */ ? false : true);
+                                const player = getPlayerName(names[j].innerText.replace("\u00A0", "").trim(), j >= names.length - 3 /* team */ ? false : true);
                                 if (player in pointers) {
                                     points += pointers[player];
                                 }
