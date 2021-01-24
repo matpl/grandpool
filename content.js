@@ -123,23 +123,29 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
     
                     if (j.games[k].status.state === "FINAL") {
                         // check team points
-                        const entries = Object.entries(j.games[k].currentStats.streaks);
+                        const preGameStats = Object.entries(j.games[k].preGameStats.records);
                         for(let t = 0; t < 2; t++) {
-                            let team = getTeamName(entries[t][0]);
+
+                            let team = getTeamName(preGameStats[t][0]);
+                            const currentStats = j.games[k].currentStats.records[preGameStats[t][0]];
+
+                            let wins = currentStats.wins - preGameStats[t][1].wins;
+                            let ot = currentStats.ot - preGameStats[t][1].ot;
+
                             if (!(team in pointers)) {
                                 pointers[team] = 0;
                             }
-                            if (entries[t][1].type === "WINS") {
+                            if (wins > 0) {
                                 getGoalies(team).forEach(g => {
                                     pointers[g] += 2;
                                     // if shutout, add 1 point
-                                    if(j.games[k].scores[entries[(t + 1) % 2][0]] === 0) {
+                                    if(j.games[k].scores[preGameStats[(t + 1) % 2][0]] === 0) {
                                         pointers[g] += 1;
                                     }
                                 });
     
                                 pointers[team] += 2;
-                            } else if (entries[t][1].type === "OT") {
+                            } else if (ot > 0) {
                                 getGoalies(team).forEach(g => pointers[g] += 1);
                                 pointers[team] += 1;
                             }
