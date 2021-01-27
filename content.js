@@ -103,20 +103,22 @@ fetch("https://statsapi.web.nhl.com/api/v1/schedule").then(s => s.json()).then(d
             fetch("https://nhl-score-api.herokuapp.com/api/scores/latest").then(d => d.json()).then(j => {
                 for(let k = 0; k < j.games.length; k++) {
                     for(let g = 0; g < j.games[k].goals.length; g++) {
-                        if(j.games[k].goals[g].scorer && j.games[k].goals[g].scorer.player) {
-                            let name = getPlayerName(j.games[k].goals[g].scorer.player);
-                            if (!(name in pointers)) {
-                                pointers[name] = 0;
-                            }
-                            pointers[name] += 1;
-                        }
-                        if (j.games[k].goals[g].assists) {
-                            for(let a = 0; a < j.games[k].goals[g].assists.length; a++) {
-                                let name = getPlayerName(j.games[k].goals[g].assists[a].player);
+                        if(j.games[k].goals[g].period && j.games[k].goals[g].period !== "SO") {
+                            if(j.games[k].goals[g].scorer && j.games[k].goals[g].scorer.player) {
+                                let name = getPlayerName(j.games[k].goals[g].scorer.player);
                                 if (!(name in pointers)) {
                                     pointers[name] = 0;
                                 }
                                 pointers[name] += 1;
+                            }
+                            if (j.games[k].goals[g].assists) {
+                                for(let a = 0; a < j.games[k].goals[g].assists.length; a++) {
+                                    let name = getPlayerName(j.games[k].goals[g].assists[a].player);
+                                    if (!(name in pointers)) {
+                                        pointers[name] = 0;
+                                    }
+                                    pointers[name] += 1;
+                                }
                             }
                         }
                     }
